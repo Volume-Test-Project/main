@@ -1,0 +1,40 @@
+spring:
+  security:
+    user:
+      name: user
+      password: 1234
+      roles: USER
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+    datasource:
+        url: jdbc:h2:mem:volumedb
+        username: sa
+        password: 1234
+    jpa:
+        hibernate:
+          ddl-auto: create
+        show-sql: true
+        properties:
+          hibernate:
+            format_sql: true
+    sql:
+        init:
+            data-locations: classpath*:db/h2/data.sql
+
+logging:
+    level:
+        org:
+            jpa: DEBUG
+        orm:
+            springframework:
+    pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} [%4L] - %m%n"
+        file: "[%d{HH:mm:ss.SSS}][%-5level][%t][%logger.%method:line%line] - %msg%n"
+    file:
+        name: "/tmp/logs/volume/server.log"
+server:
+  servlet:
+    encoding:
+      force-response: true
