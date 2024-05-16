@@ -12,7 +12,7 @@
 **[BE] 신동하** [https://github.com/DongDongShin]<br>  
 
 ## ⚒Tech Stack
-![My Skills](https://skillicons.dev/icons?i=java,spring,gradle,mysql,html,sass,aws,docker,nginx&perline=10)
+![My Skills](https://skillicons.dev/icons?i=java,spring,gradle,mysql,docker&perline=10)
 
 ## 📃api명세서
 
