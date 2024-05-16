@@ -5,11 +5,11 @@
 ##### BE Github : [https://github.com/Volume-Test-Project]
 
 ## 👥Team Member
-[BE] 이주희 [https://github.com/twoweekhee] <br>
-[BE] 이하연 [https://github.com/hayeon1ee]<br>
-[BE] 박준형 [https://github.com/POKUDING] <br>
-[BE] 서재곤 [https://github.com/Jgone2] <br>
-[BE] 신동하 [https://github.com/DongDongShin]<br>  
+**[BE] 이주희** [https://github.com/twoweekhee] <br>
+**[BE] 이하연** [https://github.com/hayeon1ee]<br>
+**[BE] 박준형** [https://github.com/POKUDING] <br>
+**[BE] 서재곤** [https://github.com/Jgone2] <br>
+**[BE] 신동하** [https://github.com/DongDongShin]<br>  
 
 ## ⚒Tech Stack
 <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"/>
