@@ -5,7 +5,9 @@
 ##### BE Github : [https://github.com/Volume-Test-Project]
 
 ## 👥Team Member
-**[BE] 이름:        Github:      **
+
+[BE] 서재곤 [https://github.com/Jgone2] <br>
+[BE] 신동하 [https://github.com/DongDongShin]<br>  
 
 ## ⚒Tech Stack
 <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"/>
