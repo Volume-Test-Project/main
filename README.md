@@ -12,7 +12,7 @@
 **[BE] 신동하** [https://github.com/DongDongShin]<br>  
 
 ## ⚒Tech Stack
-<img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white"/>&nbsp;<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"/>
+![My Skills](https://skillicons.dev/icons?i=java,spring,gradle,mysql,html,sass,aws,docker,nginx&perline=10)
 
 ## 📃api명세서
 
