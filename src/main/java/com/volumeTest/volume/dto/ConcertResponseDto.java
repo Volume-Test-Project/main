@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -14,6 +15,6 @@ public class ConcertResponseDto {
     @NotNull
     private Long concertId;
     private String concertName;
-    private Date concertDate;
+    private LocalDate concertDate;
 
 }

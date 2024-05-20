@@ -6,12 +6,13 @@ import com.volumeTest.volume.entity.ConcertEntity;
 import com.volumeTest.volume.repository.ConcertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ConcertService {
 
     @Autowired
@@ -39,10 +40,8 @@ public class ConcertService {
     }
 
     public ConcertResponseDto updateConcert(Long id, ConcertRequestDto concertRequestDto){
-        ConcertEntity foundConcert = concertRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Concert not found with Id : " + id));
-
-        foundConcert.builder()
+        ConcertEntity foundConcert = ConcertEntity.builder()
+                .concertID(id)
                 .concertName(concertRequestDto.getConcertName())
                 .concertDate(concertRequestDto.getConcertDate())
                 .build();

@@ -1,11 +1,10 @@
 package com.volumeTest.volume.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -19,8 +18,10 @@ public class ConcertEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long concertID;
 
+    @NotNull
     private String concertName;
-    private Date concertDate;
+    @NotNull
+    private LocalDate concertDate;
 
 
 
