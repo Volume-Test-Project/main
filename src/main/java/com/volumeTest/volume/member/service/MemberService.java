@@ -1,6 +1,6 @@
 package com.volumeTest.volume.member.service;
 
-import com.volumeTest.volume.member.Entity.Member;
+import com.volumeTest.volume.member.entity.Member;
 
 public interface MemberService {
 

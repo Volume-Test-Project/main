@@ -1,4 +1,4 @@
-package com.volumeTest.volume.member.Entity;
+package com.volumeTest.volume.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

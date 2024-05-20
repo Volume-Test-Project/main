@@ -1,7 +1,7 @@
 package com.volumeTest.volume.member.service;
 
 import com.volumeTest.volume.common.exception.codeEnum.ExceptionCode;
-import com.volumeTest.volume.member.Entity.Member;
+import com.volumeTest.volume.member.entity.Member;
 import com.volumeTest.volume.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.volumeTest.volume.member.Dto;
+package com.volumeTest.volume.member.dto;
 
 import com.volumeTest.volume.common.pattern.custom.member.Email;
 import com.volumeTest.volume.common.pattern.custom.member.Name;

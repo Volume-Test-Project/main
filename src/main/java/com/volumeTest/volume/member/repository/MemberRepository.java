@@ -1,6 +1,6 @@
 package com.volumeTest.volume.member.repository;
 
-import com.volumeTest.volume.member.Entity.Member;
+import com.volumeTest.volume.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
