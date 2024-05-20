@@ -1,9 +1,11 @@
 package com.volumeTest.volume.common.pattern.customValidation.member;
 
+import com.volumeTest.volume.common.pattern.custom.member.Email;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class EmailValidator implements ConstraintValidator<Email, String> {
+public class EmailValidatior implements ConstraintValidator<Email, String> {
 
   // 이메일 정규표현식(https://emailregex.com/)
   private static final String EMAIL_PATTERN =
