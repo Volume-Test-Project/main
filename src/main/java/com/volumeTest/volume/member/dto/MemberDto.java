@@ -56,7 +56,6 @@ public class MemberDto {
       private String password;
     }
 
-    @Builder
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -71,7 +70,6 @@ public class MemberDto {
       private String name;
     }
 
-    @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
