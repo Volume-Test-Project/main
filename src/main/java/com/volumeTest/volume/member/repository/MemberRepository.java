@@ -1,2 +1,12 @@
-package com.volumeTest.volume.member.repository;public interface MemberRepository {
+package com.volumeTest.volume.member.repository;
+
+import com.volumeTest.volume.member.Entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface MemberRepository extends JpaRepository<Member, Long> {
+  Optional<Member> findByEmail(String email);
 }
