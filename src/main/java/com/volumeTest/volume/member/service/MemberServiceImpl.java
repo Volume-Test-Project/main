@@ -35,14 +35,14 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public Member updateMember(Member member, String password) {
+  public Member updateMember(Member member, String name, String password) {
     // 회원 조회
     Member findMember = findVerifyMemberByEmail(member.getEmail());
 
     checkPassword(findMember, password);
 
     // 변경할 정보 저장
-    findMember.setName(member.getName());
+    findMember.setName(name);
 
     // 변경된 정보 저장
     Member updatedMember = memberRepository.save(findMember);
@@ -55,13 +55,13 @@ public class MemberServiceImpl implements MemberService {
   public Member updateMemberPassword(Member member, String password) {
     Member findMember = findVerifyMemberByEmail(member.getEmail());
 
-    // 변경할 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(password);
-
     // 새로운 비밀번호와 이전 비밀번호가 같으면 변경하지 않음
-    if (passwordEncoder.matches(findMember.getPassword(), encryptedPassword)) {
+    if (passwordEncoder.matches(password, findMember.getPassword())) { // 평문 비밀번호와 암호화된 비밀번호 비교
       throw new RuntimeException(ExceptionCode.MEMBER_PASSWORD_NOT_CHANGE.getMessage());
     }
+
+    // 변경할 비밀번호 암호화
+    String encryptedPassword = passwordEncoder.encode(password);
 
     // 변경할 암호화된 비밀번호 저장
     findMember.setPassword(encryptedPassword);
@@ -71,6 +71,7 @@ public class MemberServiceImpl implements MemberService {
 
     return updatedMember;
   }
+
 
   @Override
   public void deleteMember(Member member, String password) {
@@ -97,10 +98,8 @@ public class MemberServiceImpl implements MemberService {
   private Boolean checkPassword(Member member, String password) {
     // 회원의 비밀번호 추출
     String memberPassword = member.getPassword();
-    // 입력받은 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(password);
     // 비밀번호가 일치하지 않으면 예외 발생
-    if(!passwordEncoder.matches(memberPassword, encryptedPassword)) {
+    if(!passwordEncoder.matches(password, memberPassword)) {
       throw new RuntimeException(ExceptionCode.MEMBER_PASSWORD_MISMATCH.getMessage());
     }
     // 비밀번호가 일치하면 true 반환

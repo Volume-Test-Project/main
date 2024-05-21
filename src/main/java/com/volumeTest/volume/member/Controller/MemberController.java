@@ -47,7 +47,7 @@ public class MemberController {
                                     @Valid @RequestBody MemberDto.Patch memberPatchDto) {
 
     Member findMember = memberService.findMemberByEmail(email);
-    Member updateMember = memberService.updateMember(findMember, memberPatchDto.getPassword());
+    Member updateMember = memberService.updateMember(findMember, memberPatchDto.getName(), memberPatchDto.getPassword());
 
     return ResponseEntity.ok(mapper.memberToMemberPatchResponseDto(updateMember));
   }

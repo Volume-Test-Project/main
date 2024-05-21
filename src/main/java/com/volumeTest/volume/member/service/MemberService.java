@@ -11,7 +11,7 @@ public interface MemberService {
     Member findMemberByEmail(String email);
 
     // 회원 수정
-    Member updateMember(Member member, String password);
+    Member updateMember(Member member, String name, String password);
 
     // 회원 비밀번호 변경
     Member updateMemberPassword(Member member, String password);
