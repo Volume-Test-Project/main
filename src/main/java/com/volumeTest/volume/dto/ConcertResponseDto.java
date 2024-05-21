@@ -14,7 +14,11 @@ public class ConcertResponseDto {
 
     @NotNull
     private Long concertId;
+
+    @NotNull
     private String concertName;
+
+    @NotNull
     private LocalDate concertDate;
 
 }

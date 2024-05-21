@@ -7,6 +7,7 @@ import com.volumeTest.volume.repository.ConcertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ public class ConcertService {
     @Autowired
     private ConcertRepository concertRepository;
 
-    public ConcertResponseDto createConcert(ConcertRequestDto concertRequestDto) {
+    public ConcertResponseDto createConcert(@Validated ConcertRequestDto concertRequestDto) {
         ConcertEntity concert = concertRepository.save(concertRequestDto.toEntity());
 
         return  toDto(concert);
@@ -39,7 +40,7 @@ public class ConcertService {
         return dtoList;
     }
 
-    public ConcertResponseDto updateConcert(Long id, ConcertRequestDto concertRequestDto){
+    public ConcertResponseDto updateConcert(Long id, @Validated ConcertRequestDto concertRequestDto){
         ConcertEntity foundConcert = ConcertEntity.builder()
                 .concertID(id)
                 .concertName(concertRequestDto.getConcertName())
