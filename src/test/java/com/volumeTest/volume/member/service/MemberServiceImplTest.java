@@ -42,6 +42,17 @@ class MemberServiceImplTest {
   }
 
   @Test
+  @DisplayName("중복된 이메일로 회원 가입 시 예외 발생 테스트")
+  void createMemberWithDuplicateEmail() {
+    // given
+    Member kim = new Member(1, "test@gmail.com", "a123456!#", "김테스트");
+    memberService.createMember(kim);
+
+    // when & then
+    assertThrows(Exception.class, () -> memberService.createMember(kim)); // 이미 존재하는 이메일로 가입 시도
+  }
+
+  @Test
   @DisplayName("회원 이메일로 조회 테스트")
   void findMemberByEmail() {
     // given
@@ -56,6 +67,16 @@ class MemberServiceImplTest {
     assertThat(findMember.getEmail()).isEqualTo(member.getEmail());
     assertThat(findMember.getPassword()).isEqualTo(member.getPassword());
     assertThat(findMember.getName()).isEqualTo(member.getName());
+  }
+
+  @Test
+  @DisplayName("존재하지 않는 이메일로 회원 조회 시 예외 발생")
+  void findMemberByEmailFail() {
+    // given
+    String invalidEmail = "invalid@email.com";
+
+    // when & then
+    assertThrows(Exception.class, () -> memberService.findMemberByEmail(invalidEmail));
   }
 
   @Test
@@ -74,6 +95,17 @@ class MemberServiceImplTest {
   }
 
   @Test
+  @DisplayName("잘못된 비밀번호로 회원 정보 수정 시 예외 발생 테스트")
+  void updateMemberWithWrongPassword() {
+    // given
+    Member kim = new Member(1, "test@gmail.com", "a123456!#", "김테스트");
+    Member member = memberService.createMember(kim);
+
+    // when & then
+    assertThrows(Exception.class, () -> memberService.updateMember(member, "김자바", "wrongPassword"));
+  }
+
+  @Test
   @DisplayName("회원 비밀번호 수정 테스트")
   void updateMemberPassword() {
     // given
@@ -88,7 +120,16 @@ class MemberServiceImplTest {
     assertTrue(passwordEncoder.matches("a654321!#", findMember.getPassword())); // 새로운 비밀번호 일치 확인
   }
 
+  @Test
+  @DisplayName("동일한 비밀번호로 비밀번호 변경 시도 시 예외 발생 테스트")
+  void updateMemberPasswordWithSamePassword() {
+    // given
+    Member kim = new Member(1, "test@gmail.com", "a123456!#", "김테스트");
+    Member member = memberService.createMember(kim);
 
+    // when & then
+    assertThrows(Exception.class, () -> memberService.updateMemberPassword(member, "a123456!#"));
+  }
 
   @Test
   @DisplayName("회원 탈퇴 테스트")
@@ -102,5 +143,16 @@ class MemberServiceImplTest {
 
     // then
     assertThrows(Exception.class, () -> memberService.findMemberByEmail(member.getEmail()));
+  }
+
+  @Test
+  @DisplayName("잘못된 비밀번호로 회원 탈퇴 시도 시 예외 발생 테스트")
+  void deleteMemberWithWrongPassword() {
+    // given
+    Member kim = new Member(1, "test@gmail.com", "a123456!#", "김테스트");
+    Member member = memberService.createMember(kim);
+
+    // when & then
+    assertThrows(Exception.class, () -> memberService.deleteMember(member, "wrongPassword"));
   }
 }
