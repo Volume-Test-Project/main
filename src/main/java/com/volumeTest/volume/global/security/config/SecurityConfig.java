@@ -1,4 +1,4 @@
-package com.volumeTest.volume.security.config;
+package com.volumeTest.volume.global.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
