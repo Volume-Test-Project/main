@@ -19,7 +19,7 @@ public class Member {
   @Column(nullable = false, unique = true, updatable = false, length = 30)
   private String email;
 
-  @Column(nullable = false, unique = false, updatable = true, length = 20)
+  @Column(nullable = false, unique = false, updatable = true)
   private String password;
 
   @Column(nullable = false, unique = false, updatable = true, length = 20)
