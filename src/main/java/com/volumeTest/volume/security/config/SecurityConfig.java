@@ -1,8 +1,10 @@
 package com.volumeTest.volume.security.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,20 +26,29 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
     http
-            .csrf().disable()
-            .cors(withDefaults())   // corsConfigurationSource라는 빈을 찾아서 등록해줌
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션을 사용하지 않음 (JWT 사용)
+            .csrf()
+            .ignoringRequestMatchers(PathRequest.toH2Console())
+            .and()
+            .headers()
+            .frameOptions().sameOrigin()
+            .and()
+            .cors(withDefaults())
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .formLogin().disable()
             .httpBasic().disable()
             .exceptionHandling()
             .and()
             .authorizeHttpRequests(authorize ->
-                    authorize.anyRequest().permitAll()
+              authorize
+                .requestMatchers(PathRequest.toH2Console()).permitAll() // H2 콘솔 접근 허용
+                .requestMatchers(HttpMethod.POST, "/member/signup").permitAll() // 회원 가입 허용
+                .requestMatchers(HttpMethod.POST, "/member/login").permitAll() // 로그인 허용
+                .anyRequest().permitAll() // 나머지 요청도 일단 전체 허용
             );
 
-    return http.build();
-  }
+      return http.build();
+    }
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
