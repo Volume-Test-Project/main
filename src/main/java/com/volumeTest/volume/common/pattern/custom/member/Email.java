@@ -1,6 +1,6 @@
 package com.volumeTest.volume.common.pattern.custom.member;
 
-import com.volumeTest.volume.common.pattern.customValidation.member.EmailValidatior;
+import com.volumeTest.volume.common.pattern.customValidation.member.EmailValidator;
 
 import javax.validation.Constraint;
 import java.lang.annotation.Documented;
@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({FIELD})
 @Retention(RUNTIME)
-@Constraint(validatedBy = EmailValidatior.class)
+@Constraint(validatedBy = EmailValidator.class)
 @Documented
 public @interface Email {
 
