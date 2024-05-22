@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/member")
 public class MemberController {
 
-  MemberService memberService;
-  MemberMapper mapper;
+  private final MemberService memberService;
+  private final MemberMapper mapper;
 
   // 회원 가입
   @PostMapping("/signup")
