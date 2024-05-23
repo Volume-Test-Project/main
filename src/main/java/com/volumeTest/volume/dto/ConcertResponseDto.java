@@ -1,6 +1,7 @@
 package com.volumeTest.volume.dto;
 
 import com.volumeTest.volume.entity.ConcertEntity;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +16,15 @@ public class ConcertResponseDto {
     @NotNull
     private Long concertId;
 
-    @NotNull
+    @NotBlank
     private String concertName;
 
-    @NotNull
+    @NotBlank
     private LocalDate concertDate;
 
+    public ConcertResponseDto(ConcertEntity concert) {
+        this.concertId = concert.getConcertID();
+        this.concertName = concert.getConcertName();
+        this.concertDate = concert.getConcertDate();
+    }
 }

@@ -40,6 +40,7 @@ public class ConcertTest {
                 .build();
         concertController.createConcert(dto1);
         concertController.createConcert(dto2);
+        log.info("아ㅓ니아ㅓ니 = {}", dto1);
     }
 
     @AfterEach

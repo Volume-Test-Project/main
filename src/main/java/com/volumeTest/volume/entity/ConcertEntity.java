@@ -19,8 +19,11 @@ public class ConcertEntity {
     private Long concertID;
 
     @NotNull
+    @Column(length = 20)
     private String concertName;
+
     @NotNull
+    @Column
     private LocalDate concertDate;
 
 

@@ -22,20 +22,20 @@ public class ConcertService {
     public ConcertResponseDto createConcert(@Validated ConcertRequestDto concertRequestDto) {
         ConcertEntity concert = concertRepository.save(concertRequestDto.toEntity());
 
-        return  toDto(concert);
+        return  new ConcertResponseDto(concert);
     }
 
     public ConcertResponseDto findById(Long id) {
         ConcertEntity concert = concertRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Concert not found with Id : " + id));
 
-        return toDto(concert);
+        return new ConcertResponseDto(concert);
     }
 
     public List<ConcertResponseDto> findAll() {
         List<ConcertEntity> concertList =  concertRepository.findAll();
         List<ConcertResponseDto> dtoList = concertList.stream()
-                .map(o -> toDto(o))
+                .map(ConcertResponseDto::new)
                 .collect(Collectors.toList());
         return dtoList;
     }
@@ -49,7 +49,7 @@ public class ConcertService {
 
         ConcertEntity updateConcert = concertRepository.save(foundConcert);
 
-        return toDto(updateConcert);
+        return new ConcertResponseDto(updateConcert);
     }
 
     public void deleteConcert(Long id) {
@@ -60,11 +60,4 @@ public class ConcertService {
     }
 
 
-    public ConcertResponseDto toDto(ConcertEntity concert) {
-        return ConcertResponseDto.builder()
-                .concertId(concert.getConcertID())
-                .concertName(concert.getConcertName())
-                .concertDate(concert.getConcertDate())
-                .build();
-    }
 }
