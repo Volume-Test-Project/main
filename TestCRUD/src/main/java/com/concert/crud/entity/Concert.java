@@ -10,7 +10,6 @@ import java.time.LocalDate;
 
 @Entity(name="concert")
 @Getter
-//@Setter
 //@Builder
 @NoArgsConstructor
 //@AllArgsConstructor
