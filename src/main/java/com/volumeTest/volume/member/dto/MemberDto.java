@@ -60,7 +60,7 @@ public class MemberDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public abstract static class MemberResponse {
+    public static class MemberResponse {
 
       private int  memberId;
       @Email
