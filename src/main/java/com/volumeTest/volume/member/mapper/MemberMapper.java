@@ -5,7 +5,7 @@ import com.volumeTest.volume.member.entity.Member;
 
 public interface MemberMapper {
   // To Entity
-  Member memberPostDtoToMember(MemberDto.Post memberPostDto);
+  Member memberPostDtoToMember(MemberDto.Post memberPostDto, String encryptedPassword);
   Member memberPatchDtoToMember(MemberDto.Patch memberPatchDto);
 
   // Login
@@ -15,6 +15,7 @@ public interface MemberMapper {
   MemberDto.CheckPassword checkPasswordToMember(MemberDto.CheckPassword checkPasswordDto);
 
   // Response
+  MemberDto.MemberPostResponse memeberPostDtoToResponse(MemberDto.Post memberPostDto, String encryptedPassword);
   MemberDto.MemberPostResponse memberToMemberPostResponseDto(Member member);
   MemberDto.MemberPatchResponse memberToMemberPatchResponseDto(Member member);
 }

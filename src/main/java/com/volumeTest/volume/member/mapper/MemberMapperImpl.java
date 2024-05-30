@@ -15,15 +15,14 @@ import org.springframework.stereotype.Component;
 public class MemberMapperImpl implements MemberMapper {
 
   @Override
-  public Member memberPostDtoToMember(MemberDto.Post memberPostDto) {
-    if ( memberPostDto == null ) {
-      return null;
-    }
-
-    Member member = new Member();
-
-    return member;
+  public Member memberPostDtoToMember(MemberDto.Post memberPostDto, String encryptedPassword) {
+    return Member.builder()
+            .email(memberPostDto.getEmail())
+            .password(encryptedPassword)
+            .name(memberPostDto.getName())
+            .build();
   }
+
 
   @Override
   public Member memberPatchDtoToMember(MemberDto.Patch memberPatchDto) {
@@ -57,6 +56,23 @@ public class MemberMapperImpl implements MemberMapper {
     MemberDto.CheckPassword checkPassword = new MemberDto.CheckPassword(password);
 
     return checkPassword;
+  }
+
+  @Override
+  public MemberDto.MemberPostResponse memeberPostDtoToResponse(MemberDto.Post memberPostDto, String encryptedPassword) {
+    if ( memberPostDto == null ) {
+      return null;
+    }
+
+    int memberId = 0;
+    String email = null;
+    String password = null;
+    String name = null;
+    LocalDateTime createdAt = null;
+
+    MemberDto.MemberPostResponse memberPostResponse = new MemberDto.MemberPostResponse( memberId, email, password, name, createdAt );
+
+    return memberPostResponse;
   }
 
   @Override
