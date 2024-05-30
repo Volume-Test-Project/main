@@ -9,7 +9,7 @@ spring:
       enabled: true
       path: /h2-console
     datasource:
-      url: jdbc:h2:mem:volumedb
+      url: jdbc:h2:tcp://localhost/mem:volumedb
       username: sa
       password: 1234
     jpa:
