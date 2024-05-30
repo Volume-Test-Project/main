@@ -1,7 +1,9 @@
 package com.volumeTest.volume.member.service;
 
 import com.volumeTest.volume.common.exception.codeEnum.ExceptionCode;
+import com.volumeTest.volume.member.dto.MemberDto;
 import com.volumeTest.volume.member.entity.Member;
+import com.volumeTest.volume.member.mapper.MemberMapper;
 import com.volumeTest.volume.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,16 +19,18 @@ public class MemberServiceImpl implements MemberService {
 
   private final MemberRepository memberRepository;
   private final BCryptPasswordEncoder passwordEncoder;
+  private final MemberMapper memberMapper;
 
   @Override
-  public Member createMember(Member member) {
-    verifyExistsEmail(member.getEmail());
+  public MemberDto.MemberPostResponse createMember(MemberDto.Post memberPostDto) {
+    verifyExistsEmail(memberPostDto.getEmail());
     // 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(member.getPassword());
-    member.setPassword(encryptedPassword);
+    String encryptedPassword = passwordEncoder.encode(memberPostDto.getPassword());
 
-    Member savedMember = memberRepository.save(member);
-    return savedMember;
+    MemberDto.MemberPostResponse response = memberMapper.memeberPostDtoToResponse(memberPostDto, encryptedPassword);
+
+    Member savedMember = memberRepository.save(memberMapper.memberPostDtoToMember(memberPostDto, encryptedPassword));
+    return response;
   }
 
   @Override

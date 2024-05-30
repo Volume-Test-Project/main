@@ -1,11 +1,12 @@
 package com.volumeTest.volume.member.service;
 
+import com.volumeTest.volume.member.dto.MemberDto;
 import com.volumeTest.volume.member.entity.Member;
 
 public interface MemberService {
 
     // 회원 생성
-    Member createMember(Member member);
+    MemberDto.MemberPostResponse createMember(MemberDto.Post memberPostDto);
 
     // 회원 조회
     Member findMemberByEmail(String email);

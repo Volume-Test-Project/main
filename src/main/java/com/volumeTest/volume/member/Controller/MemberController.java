@@ -24,10 +24,7 @@ public class MemberController {
   // 회원 가입
   @PostMapping("/signup")
   public ResponseEntity postMember(@RequestBody @Valid MemberDto.Post memberPostDto) {
-
-    Member member = mapper.memberPostDtoToMember(memberPostDto);
-    memberService.createMember(member);
-
+    memberService.createMember(memberPostDto);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
