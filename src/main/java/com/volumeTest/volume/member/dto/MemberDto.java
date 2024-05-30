@@ -57,6 +57,7 @@ public class MemberDto {
     }
 
     @Getter
+    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public abstract static class MemberResponse {
