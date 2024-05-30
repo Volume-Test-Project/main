@@ -1,26 +1,15 @@
-package com.volumeTest.volume;
+package com.volumeTest.volume.concert.controller;
 
-import com.volumeTest.volume.controller.ConcertController;
-import com.volumeTest.volume.dto.ConcertRequestDto;
-import com.volumeTest.volume.repository.ConcertRepository;
-import com.volumeTest.volume.service.ConcertService;
+import com.volumeTest.volume.concert.dto.ConcertRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 @Slf4j
 @SpringBootTest

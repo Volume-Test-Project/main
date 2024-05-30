@@ -1,13 +1,11 @@
-package com.volumeTest.volume.dto;
+package com.volumeTest.volume.concert.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.volumeTest.volume.entity.ConcertEntity;
+import com.volumeTest.volume.concert.entity.ConcertEntity;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 

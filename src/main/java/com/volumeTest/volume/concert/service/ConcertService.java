@@ -1,9 +1,9 @@
-package com.volumeTest.volume.service;
+package com.volumeTest.volume.concert.service;
 
-import com.volumeTest.volume.dto.ConcertRequestDto;
-import com.volumeTest.volume.dto.ConcertResponseDto;
-import com.volumeTest.volume.entity.ConcertEntity;
-import com.volumeTest.volume.repository.ConcertRepository;
+import com.volumeTest.volume.concert.dto.ConcertRequestDto;
+import com.volumeTest.volume.concert.dto.ConcertResponseDto;
+import com.volumeTest.volume.concert.entity.ConcertEntity;
+import com.volumeTest.volume.concert.repository.ConcertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.volumeTest.volume.entity;
+package com.volumeTest.volume.concert.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

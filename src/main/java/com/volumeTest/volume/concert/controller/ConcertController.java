@@ -1,10 +1,9 @@
-package com.volumeTest.volume.controller;
+package com.volumeTest.volume.concert.controller;
 
-import com.volumeTest.volume.dto.ConcertRequestDto;
-import com.volumeTest.volume.dto.ConcertResponseDto;
-import com.volumeTest.volume.service.ConcertService;
+import com.volumeTest.volume.concert.dto.ConcertRequestDto;
+import com.volumeTest.volume.concert.dto.ConcertResponseDto;
+import com.volumeTest.volume.concert.service.ConcertService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

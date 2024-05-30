@@ -1,13 +1,12 @@
-package com.volumeTest.volume.dto;
+package com.volumeTest.volume.concert.dto;
 
-import com.volumeTest.volume.entity.ConcertEntity;
+import com.volumeTest.volume.concert.entity.ConcertEntity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Builder
