@@ -46,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
     checkPassword(findMember, password);
 
     // 변경할 정보 저장
-    findMember.setName(name);
+    //findMember.setName(name);
 
     // 변경된 정보 저장
     Member updatedMember = memberRepository.save(findMember);
@@ -68,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
     String encryptedPassword = passwordEncoder.encode(password);
 
     // 변경할 암호화된 비밀번호 저장
-    findMember.setPassword(encryptedPassword);
+    //findMember.setPassword(encryptedPassword);
 
     // 변경된 정보 저장
     Member updatedMember = memberRepository.save(findMember);
