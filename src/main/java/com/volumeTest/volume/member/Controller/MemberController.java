@@ -5,8 +5,6 @@ import static com.volumeTest.volume.common.util.ApiResponseUtil.success;
 import com.volumeTest.volume.common.util.ApiResponseUtil;
 import com.volumeTest.volume.common.util.ApiResponseUtil.ApiResult;
 import com.volumeTest.volume.member.dto.MemberDto;
-import com.volumeTest.volume.member.dto.MemberDto.MemberPatchResponse;
-import com.volumeTest.volume.member.dto.MemberDto.MemberPostResponse;
 import com.volumeTest.volume.member.entity.Member;
 import com.volumeTest.volume.member.mapper.MemberMapper;
 import com.volumeTest.volume.member.service.MemberService;
