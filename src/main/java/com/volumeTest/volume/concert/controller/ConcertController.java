@@ -1,5 +1,7 @@
 package com.volumeTest.volume.concert.controller;
 
+import com.volumeTest.volume.common.util.ApiResponseUtil;
+import com.volumeTest.volume.common.util.ApiResponseUtil.ApiResult;
 import com.volumeTest.volume.concert.dto.ConcertRequestDto;
 import com.volumeTest.volume.concert.dto.ConcertResponseDto;
 import com.volumeTest.volume.concert.service.ConcertService;
@@ -16,21 +18,21 @@ public class ConcertController {
     ConcertService concertService;
 
     @GetMapping
-    public List<ConcertResponseDto> showConcertList() {
-        return concertService.findAll();
+    public ApiResult<List<ConcertResponseDto>> showConcertList() {
+        return ApiResponseUtil.success(concertService.findAll());
     }
     @PostMapping("/concert")
-    public ConcertResponseDto createConcert(@RequestBody ConcertRequestDto concertRequestDto) {
-        return concertService.createConcert(concertRequestDto);
+    public ApiResult<ConcertResponseDto> createConcert(@RequestBody ConcertRequestDto concertRequestDto) {
+        return ApiResponseUtil.success(concertService.createConcert(concertRequestDto));
     }
 
     @GetMapping("/{id}")
-    public ConcertResponseDto showConcert(@PathVariable("id") Long id){
-        return concertService.findById(id);
+    public ApiResult<ConcertResponseDto> showConcert(@PathVariable("id") Long id){
+        return ApiResponseUtil.success(concertService.findById(id));
     }
     @PutMapping("/{id}")
-    public ConcertResponseDto updateConcert(@PathVariable("id") Long id, @RequestBody ConcertRequestDto concertRequestDto) {
-        return concertService.updateConcert(id, concertRequestDto);
+    public ApiResult<ConcertResponseDto> updateConcert(@PathVariable("id") Long id, @RequestBody ConcertRequestDto concertRequestDto) {
+        return ApiResponseUtil.success(concertService.updateConcert(id, concertRequestDto));
     }
 
     @DeleteMapping("/{id}")
