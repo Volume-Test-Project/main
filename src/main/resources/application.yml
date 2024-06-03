@@ -38,3 +38,7 @@ server:
   servlet:
     encoding:
       force-response: true
+
+jwt:
+  issuer: volume
+  secretKey: volumeSecret
