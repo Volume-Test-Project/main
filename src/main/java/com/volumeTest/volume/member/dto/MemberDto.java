@@ -57,9 +57,8 @@ public class MemberDto {
     }
 
     @Getter
-    @Builder
-    @AllArgsConstructor
     @NoArgsConstructor
+    @AllArgsConstructor
     public abstract static class MemberResponse {
 
       private int  memberId;
@@ -77,7 +76,8 @@ public class MemberDto {
     public static class MemberPostResponse extends MemberResponse {
       private LocalDateTime createdAt;
 
-      public MemberPostResponse(int memberId, String email, String password, String name, LocalDateTime createdAt) {;
+      public MemberPostResponse(int memberId, String email, String password, String name, LocalDateTime createdAt) {
+        super(memberId, email, password, name);
         this.createdAt = createdAt;
       }
     }
