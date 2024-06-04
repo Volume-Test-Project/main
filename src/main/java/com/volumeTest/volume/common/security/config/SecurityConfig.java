@@ -1,4 +1,4 @@
-package com.volumeTest.volume.security.config;
+package com.volumeTest.volume.common.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;

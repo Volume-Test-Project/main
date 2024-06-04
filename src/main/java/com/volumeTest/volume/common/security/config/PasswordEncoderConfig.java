@@ -1,4 +1,4 @@
-package com.volumeTest.volume.security.config;
+package com.volumeTest.volume.common.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
