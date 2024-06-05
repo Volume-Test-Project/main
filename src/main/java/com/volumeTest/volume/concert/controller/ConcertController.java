@@ -1,9 +1,17 @@
 package com.volumeTest.volume.concert.controller;
 
+import static com.volumeTest.volume.common.util.ApiResponseUtil.success;
+
+import com.volumeTest.volume.common.util.ApiResponseUtil;
+import com.volumeTest.volume.common.util.ApiResponseUtil.ApiResult;
 import com.volumeTest.volume.concert.dto.ConcertRequestDto;
 import com.volumeTest.volume.concert.dto.ConcertResponseDto;
 import com.volumeTest.volume.concert.service.ConcertService;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,21 +24,21 @@ public class ConcertController {
     ConcertService concertService;
 
     @GetMapping
-    public List<ConcertResponseDto> showConcertList() {
-        return concertService.findAll();
+    public ResponseEntity<Object> showConcertList() {
+        return new ResponseEntity<>(success(concertService.findAll()), new HttpHeaders(), HttpStatus.OK);
     }
     @PostMapping("/concert")
-    public ConcertResponseDto createConcert(@RequestBody ConcertRequestDto concertRequestDto) {
-        return concertService.createConcert(concertRequestDto);
+    public ResponseEntity<Object> createConcert(@RequestBody ConcertRequestDto concertRequestDto) {
+        return new ResponseEntity<>(success(concertService.createConcert(concertRequestDto)), new HttpHeaders(), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ConcertResponseDto showConcert(@PathVariable("id") Long id){
-        return concertService.findById(id);
+    public ResponseEntity<Object> showConcert(@PathVariable("id") Long id){
+        return new ResponseEntity<>(success(concertService.findById(id)), new HttpHeaders(), HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ConcertResponseDto updateConcert(@PathVariable("id") Long id, @RequestBody ConcertRequestDto concertRequestDto) {
-        return concertService.updateConcert(id, concertRequestDto);
+    public ResponseEntity<Object> updateConcert(@PathVariable("id") Long id, @RequestBody ConcertRequestDto concertRequestDto) {
+        return new ResponseEntity<>(success(concertService.updateConcert(id, concertRequestDto)), new HttpHeaders(), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

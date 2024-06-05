@@ -23,4 +23,12 @@ public class Member {
 
   @Column(nullable = false, unique = false, updatable = true, length = 20)
   private String name;
+
+  public void updateName(String name) {
+    this.name = name;
+  }
+
+  public void updatePassword(String password) {
+    this.password = password;
+  }
 }
