@@ -1,6 +1,7 @@
 package com.volumeTest.volume.member.service;
 
-import com.volumeTest.volume.common.exception.codeEnum.ExceptionCode;
+import com.volumeTest.volume.common.exception.ExceptionStatus;
+import com.volumeTest.volume.common.exception.VolumeTestException;
 import com.volumeTest.volume.member.dto.MemberDto;
 import com.volumeTest.volume.member.entity.Member;
 import com.volumeTest.volume.member.mapper.MemberMapper;
@@ -46,7 +47,11 @@ public class MemberServiceImpl implements MemberService {
     checkPassword(findMember, password);
 
     // 변경할 정보 저장
+<<<<<<< HEAD
     //findMember.setName(name);
+=======
+    findMember.updateName(name);
+>>>>>>> KAN-12--Concert
 
     // 변경된 정보 저장
     Member updatedMember = memberRepository.save(findMember);
@@ -61,14 +66,18 @@ public class MemberServiceImpl implements MemberService {
 
     // 새로운 비밀번호와 이전 비밀번호가 같으면 변경하지 않음
     if (passwordEncoder.matches(password, findMember.getPassword())) { // 평문 비밀번호와 암호화된 비밀번호 비교
-      throw new RuntimeException(ExceptionCode.MEMBER_PASSWORD_NOT_CHANGE.getMessage());
+      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
     }
 
     // 변경할 비밀번호 암호화
     String encryptedPassword = passwordEncoder.encode(password);
 
     // 변경할 암호화된 비밀번호 저장
+<<<<<<< HEAD
     //findMember.setPassword(encryptedPassword);
+=======
+    findMember.updatePassword(encryptedPassword);
+>>>>>>> KAN-12--Concert
 
     // 변경된 정보 저장
     Member updatedMember = memberRepository.save(findMember);
@@ -88,15 +97,13 @@ public class MemberServiceImpl implements MemberService {
   private void verifyExistsEmail(String email) {
     memberRepository.findByEmail(email)
             .ifPresent(member -> {
-              throw new RuntimeException(ExceptionCode.MEMBER_EMAIL_EXISTS.getMessage());
+              throw new VolumeTestException(ExceptionStatus.MEMBER_EMAIL_EXISTS);
             });
   }
 
   private Member findVerifyMemberByEmail(String email) {
     return memberRepository.findByEmail(email)
-            .orElseThrow(() -> {
-              throw new RuntimeException(ExceptionCode.MEMBER_NOT_FOUND.getMessage());
-            });
+            .orElseThrow(() -> new VolumeTestException(ExceptionStatus.MEMBER_NOT_FOUND));
   }
 
   private Boolean checkPassword(Member member, String password) {
@@ -104,7 +111,7 @@ public class MemberServiceImpl implements MemberService {
     String memberPassword = member.getPassword();
     // 비밀번호가 일치하지 않으면 예외 발생
     if(!passwordEncoder.matches(password, memberPassword)) {
-      throw new RuntimeException(ExceptionCode.MEMBER_PASSWORD_MISMATCH.getMessage());
+      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
     }
     // 비밀번호가 일치하면 true 반환
     return true;

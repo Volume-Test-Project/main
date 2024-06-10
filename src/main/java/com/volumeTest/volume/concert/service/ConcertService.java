@@ -1,9 +1,12 @@
 package com.volumeTest.volume.concert.service;
 
+import com.volumeTest.volume.common.exception.ExceptionStatus;
+import com.volumeTest.volume.common.exception.VolumeTestException;
 import com.volumeTest.volume.concert.dto.ConcertRequestDto;
 import com.volumeTest.volume.concert.dto.ConcertResponseDto;
 import com.volumeTest.volume.concert.entity.Concert;
 import com.volumeTest.volume.concert.repository.ConcertRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class ConcertService {
 
-    @Autowired
     private ConcertRepository concertRepository;
 
     public ConcertResponseDto createConcert(@Validated ConcertRequestDto concertRequestDto) {
@@ -27,7 +30,7 @@ public class ConcertService {
 
     public ConcertResponseDto findById(Long id) {
         Concert concert = concertRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Concert not found with Id : " + id));
+                .orElseThrow(() -> new VolumeTestException(ExceptionStatus.CONCERT_NOT_FOUND));
 
         return new ConcertResponseDto(concert);
     }
@@ -54,7 +57,7 @@ public class ConcertService {
 
     public void deleteConcert(Long id) {
         Concert concert = concertRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Concert not found with Id : " + id));
+                .orElseThrow(() -> new VolumeTestException(ExceptionStatus.CONCERT_NOT_FOUND));
 
         concertRepository.delete(concert);
     }
