@@ -1,7 +1,7 @@
 package com.volumeTest.volume.member.service;
 
 import com.volumeTest.volume.common.exception.ExceptionStatus;
-import com.volumeTest.volume.common.exception.VolumeTestException;
+import com.volumeTest.volume.common.pattern.Validator.MemberValidator;
 import com.volumeTest.volume.member.dto.MemberDto;
 import com.volumeTest.volume.member.entity.Member;
 import com.volumeTest.volume.member.mapper.MemberMapper;
@@ -21,91 +21,84 @@ public class MemberServiceImpl implements MemberService {
   private final MemberRepository memberRepository;
   private final BCryptPasswordEncoder passwordEncoder;
   private final MemberMapper memberMapper;
+  private final MemberValidator memberValidator;
 
   @Override
-  public MemberDto.MemberPostResponse createMember(MemberDto.Post memberPostDto) {
-    verifyExistsEmail(memberPostDto.getEmail());
+  public MemberDto.MemberResponse createMember(MemberDto.Post memberPostDto) {
+    memberValidator.verifyExistsEmail(memberPostDto.getEmail());
     // 비밀번호 암호화
     String encryptedPassword = passwordEncoder.encode(memberPostDto.getPassword());
 
-    MemberDto.MemberPostResponse response = memberMapper.memeberPostDtoToResponse(memberPostDto, encryptedPassword);
-
-    Member savedMember = memberRepository.save(memberMapper.memberPostDtoToMember(memberPostDto, encryptedPassword));
-    return response;
+    Member member = memberMapper.memberPostDtoToMember(memberPostDto, encryptedPassword);
+    member = memberRepository.save(member);
+    MemberDto.MemberResponse memberCreatedResponse = memberMapper.entityToResponse(member);
+    return memberCreatedResponse;
   }
 
   @Override
-  public Member findMemberByEmail(String email) {
-    return findVerifyMemberByEmail(email);
+  public MemberDto.MemberResponse findMemberByEmail(String email) {
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
+    MemberDto.MemberResponse memberFindedResponse = memberMapper.entityToResponse(findMember);
+    return memberFindedResponse;
   }
 
   @Override
-  public Member updateMember(Member member, String name, String password) {
+  public MemberDto.MemberResponse updateMember(String email, MemberDto.Put memberPutDto) {
     // 회원 조회
-    Member findMember = findVerifyMemberByEmail(member.getEmail());
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
 
-    checkPassword(findMember, password);
+    memberValidator.checkPassword(findMember, memberPutDto.getPassword());
 
     // 변경할 정보 저장
-    findMember.updateName(name);
+    Member updatedMember = memberMapper.memberPutDtoToMember(memberPutDto);
 
     // 변경된 정보 저장
-    Member updatedMember = memberRepository.save(findMember);
+    memberRepository.save(updatedMember);
+
+    MemberDto.MemberPutResponse memberUpdateResponse = memberMapper.memberToMemberPutResponseDto(updatedMember);
 
     log.info("{}님의 정보가 수정되었습니다. 수정된 정보: 이름={}, 이메일={}", findMember.getName(), updatedMember.getName(), updatedMember.getEmail());
-    return updatedMember;
+    return memberUpdateResponse;
   }
 
   @Override
-  public Member updateMemberPassword(Member member, String password) {
-    Member findMember = findVerifyMemberByEmail(member.getEmail());
+  public MemberDto.MemberResponse updateMemberPassword(String email, MemberDto.PutPassword memberPutPasswordDto) {
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
 
     // 새로운 비밀번호와 이전 비밀번호가 같으면 변경하지 않음
-    if (passwordEncoder.matches(password, findMember.getPassword())) { // 평문 비밀번호와 암호화된 비밀번호 비교
-      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
-    }
+    memberValidator.verifyPrePasswordAndNewPasswordMatch(passwordEncoder.matches(memberPutPasswordDto.getPassword(), findMember.getPassword()), ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
 
     // 변경할 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(password);
+    String encryptedPassword = passwordEncoder.encode(memberPutPasswordDto.getPassword());
 
     // 변경할 암호화된 비밀번호 저장
-    findMember.updatePassword(encryptedPassword);
+    Member updatedMember = rebuildMemberPassword(findMember, encryptedPassword);
 
     // 변경된 정보 저장
-    Member updatedMember = memberRepository.save(findMember);
+    updatedMember = memberRepository.save(updatedMember);
 
-    return updatedMember;
+    MemberDto.MemberResponse updatePasswordResponse = memberMapper.entityToResponse(updatedMember);
+
+    return updatePasswordResponse;
   }
-
 
   @Override
-  public void deleteMember(Member member, String password) {
+  public void deleteMember(String email, MemberDto.Delete memberDeleteDto) {
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
     // 패스워드로 검증
-    checkPassword(member, password);
-    memberRepository.delete(member);
-  }
+    String encryptedPassword = passwordEncoder.encode(memberDeleteDto.getPassword());
+    memberValidator.checkPassword(findMember, encryptedPassword);
 
-  // Verify
-  private void verifyExistsEmail(String email) {
-    memberRepository.findByEmail(email)
-            .ifPresent(member -> {
-              throw new VolumeTestException(ExceptionStatus.MEMBER_EMAIL_EXISTS);
-            });
+    log.info("{}님의 정보가 삭제되었습니다.", findMember.getEmail());
+    memberRepository.delete(findMember);
   }
-
-  private Member findVerifyMemberByEmail(String email) {
-    return memberRepository.findByEmail(email)
-            .orElseThrow(() -> new VolumeTestException(ExceptionStatus.MEMBER_NOT_FOUND));
-  }
-
-  private Boolean checkPassword(Member member, String password) {
-    // 회원의 비밀번호 추출
-    String memberPassword = member.getPassword();
-    // 비밀번호가 일치하지 않으면 예외 발생
-    if(!passwordEncoder.matches(password, memberPassword)) {
-      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
-    }
-    // 비밀번호가 일치하면 true 반환
-    return true;
+  
+  private Member rebuildMemberPassword(Member member, String encryptedPassword) {
+    return Member.builder()
+            .memberId(member.getMemberId())
+            .email(member.getEmail())
+            .password(encryptedPassword)
+            .name(member.getName())
+            .build();
   }
 }
