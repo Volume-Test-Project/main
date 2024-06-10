@@ -1,7 +1,9 @@
 package com.volumeTest.volume.concert.repository;
 
-import com.volumeTest.volume.concert.entity.ConcertEntity;
+import com.volumeTest.volume.concert.entity.Concert;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ConcertRepository extends JpaRepository<ConcertEntity, Long> {
+@Repository
+public interface ConcertRepository extends JpaRepository<Concert, Long> {
 }

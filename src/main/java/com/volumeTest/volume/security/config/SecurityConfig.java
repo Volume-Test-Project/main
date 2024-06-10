@@ -28,6 +28,7 @@ public class SecurityConfig {
     http
             .csrf()
             .ignoringRequestMatchers(PathRequest.toH2Console())
+            .ignoringRequestMatchers("/concerts/concert")
             .and()
             .headers()
             .frameOptions().sameOrigin()

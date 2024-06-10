@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-@Getter
 @Entity
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ConcertEntity {
+@Table(name = "CONCERTS")
+public class Concert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +23,6 @@ public class ConcertEntity {
     private String concertName;
 
     @NotNull
-    @Column
     private LocalDate concertDate;
-
-
 
 }

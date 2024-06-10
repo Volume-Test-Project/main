@@ -1,7 +1,7 @@
 package com.volumeTest.volume.concert.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.volumeTest.volume.concert.entity.ConcertEntity;
+import com.volumeTest.volume.concert.entity.Concert;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
@@ -21,8 +21,8 @@ public class ConcertRequestDto {
     @Pattern(regexp = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$\n", message = "날짜 형식이 일치하지 않습니다")
     private LocalDate concertDate;
 
-    public ConcertEntity toEntity() {
-        return ConcertEntity.builder()
+    public Concert toEntity() {
+        return Concert.builder()
                 .concertName(concertName)
                 .concertDate(concertDate)
                 .build();

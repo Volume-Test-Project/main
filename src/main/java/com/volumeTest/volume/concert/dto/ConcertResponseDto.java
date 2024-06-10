@@ -1,6 +1,6 @@
 package com.volumeTest.volume.concert.dto;
 
-import com.volumeTest.volume.concert.entity.ConcertEntity;
+import com.volumeTest.volume.concert.entity.Concert;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class ConcertResponseDto {
     @NotBlank
     private LocalDate concertDate;
 
-    public ConcertResponseDto(ConcertEntity concert) {
+    public ConcertResponseDto(Concert concert) {
         this.concertId = concert.getConcertID();
         this.concertName = concert.getConcertName();
         this.concertDate = concert.getConcertDate();

@@ -2,7 +2,7 @@ package com.volumeTest.volume.concert.service;
 
 import com.volumeTest.volume.concert.dto.ConcertRequestDto;
 import com.volumeTest.volume.concert.dto.ConcertResponseDto;
-import com.volumeTest.volume.concert.entity.ConcertEntity;
+import com.volumeTest.volume.concert.entity.Concert;
 import com.volumeTest.volume.concert.repository.ConcertRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,20 +20,20 @@ public class ConcertService {
     private ConcertRepository concertRepository;
 
     public ConcertResponseDto createConcert(@Validated ConcertRequestDto concertRequestDto) {
-        ConcertEntity concert = concertRepository.save(concertRequestDto.toEntity());
+        Concert concert = concertRepository.save(concertRequestDto.toEntity());
 
         return  new ConcertResponseDto(concert);
     }
 
     public ConcertResponseDto findById(Long id) {
-        ConcertEntity concert = concertRepository.findById(id)
+        Concert concert = concertRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Concert not found with Id : " + id));
 
         return new ConcertResponseDto(concert);
     }
 
     public List<ConcertResponseDto> findAll() {
-        List<ConcertEntity> concertList =  concertRepository.findAll();
+        List<Concert> concertList =  concertRepository.findAll();
         List<ConcertResponseDto> dtoList = concertList.stream()
                 .map(ConcertResponseDto::new)
                 .collect(Collectors.toList());
@@ -41,19 +41,19 @@ public class ConcertService {
     }
 
     public ConcertResponseDto updateConcert(Long id, @Validated ConcertRequestDto concertRequestDto){
-        ConcertEntity foundConcert = ConcertEntity.builder()
+        Concert foundConcert = Concert.builder()
                 .concertID(id)
                 .concertName(concertRequestDto.getConcertName())
                 .concertDate(concertRequestDto.getConcertDate())
                 .build();
 
-        ConcertEntity updateConcert = concertRepository.save(foundConcert);
+        Concert updateConcert = concertRepository.save(foundConcert);
 
         return new ConcertResponseDto(updateConcert);
     }
 
     public void deleteConcert(Long id) {
-        ConcertEntity concert = concertRepository.findById(id)
+        Concert concert = concertRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Concert not found with Id : " + id));
 
         concertRepository.delete(concert);
