@@ -1,15 +1,9 @@
 package com.volumeTest.volume.member.service;
 
-import com.volumeTest.volume.member.dto.MemberDto;
-import com.volumeTest.volume.member.entity.Member;
+import com.volumeTest.volume.member.dto.*;
 import com.volumeTest.volume.member.mapper.MemberMapper;
-import com.volumeTest.volume.member.repository.MemberRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,44 +22,41 @@ class MemberServiceImplTest {
   private MemberService memberService;
 
   @Autowired
-  private MemberMapper memberMapper;
-
-  @Autowired
   private BCryptPasswordEncoder passwordEncoder;
 
   @Test
   @DisplayName("회원 생성 테스트")
   void createMember() {
     // given
-    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
 
-    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+    MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
     // when & then
-    assertThat(createdMember.getEmail()).isEqualTo(memberPostDto.getEmail());
-    assertThat(createdMember.getName()).isEqualTo(memberPostDto.getName());
-    assertThat(createdMember.getPassword()).isNotEqualTo(memberPostDto.getPassword());
+    assertThat(createdMember.getEmail()).isEqualTo(memberCreateDto.getEmail());
+    assertThat(createdMember.getName()).isEqualTo(memberCreateDto.getName());
+    assertThat(createdMember.getPassword()).isNotEqualTo(memberCreateDto.getPassword());
   }
 
   @Test
   @DisplayName("중복된 이메일로 회원 가입 시 예외 발생 테스트")
   void createMemberWithDuplicateEmail() {
     // given
-    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-    memberService.createMember(memberPostDto);
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+    memberService.createMember(memberCreateDto);
 
     // when & then
-    assertThrows(Exception.class, () -> memberService.createMember(memberPostDto)); // 이미 존재하는 이메일로 가입 시도
+    assertThrows(Exception.class, () -> memberService.createMember(memberCreateDto)); // 이미 존재하는 이메일로 가입 시도
   }
 
   @Test
   @DisplayName("회원 이메일로 조회 테스트")
   void findMemberByEmail() {
     // given
-    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+    MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 
     // when
-    MemberDto.MemberResponse findMember = memberService.findMemberByEmail(createdMember.getEmail());
+    MemberResponseDto findMember = memberService.findMemberByEmail(createdMember.getEmail());
 
     // then
     assertThat(findMember.getMemberId()).isEqualTo(createdMember.getMemberId());
@@ -88,13 +79,13 @@ class MemberServiceImplTest {
   @DisplayName("회원 정보 수정 테스트")
   void updateMember() {
     // given
-    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+    MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 
-    MemberDto.Put memberPutDto = new MemberDto.Put(createdMember.getEmail(), createdMember.getPassword(), "김자바");
+    MemberUpdateDto memberUpdateDto = new MemberUpdateDto(createdMember.getEmail(), createdMember.getPassword(), "김자바");
 
     // when
-    MemberDto.MemberResponse updatedMemberResponse = memberService.updateMember(createdMember.getEmail(), memberPutDto);
+    MemberResponseDto updatedMemberResponse = memberService.updateMember(createdMember.getEmail(), memberUpdateDto);
 
     // then
     assertThat(updatedMemberResponse.getName()).isEqualTo("김자바");
@@ -105,27 +96,27 @@ class MemberServiceImplTest {
   @DisplayName("잘못된 비밀번호로 회원 정보 수정 시 예외 발생 테스트")
   void updateMemberWithWrongPassword() {
     // given
-    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+    MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 
-    MemberDto.Put memberPutDto = new MemberDto.Put(createdMember.getEmail(), "wrongPassword", createdMember.getName());
+    MemberUpdateDto memberUpdateDto = new MemberUpdateDto(createdMember.getEmail(), "wrongPassword", createdMember.getName());
 
     // when & then
-    assertThrows(Exception.class, () -> memberService.updateMember(createdMember.getEmail(), memberPutDto));
+    assertThrows(Exception.class, () -> memberService.updateMember(createdMember.getEmail(), memberUpdateDto));
   }
 
   @Test
   @DisplayName("회원 비밀번호 수정 테스트")
   void updateMemberPassword() {
     // given
-    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+    MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 
-    MemberDto.PutPassword memberPutPasswordDto = new MemberDto.PutPassword(createdMember.getEmail(), "a654321!#");
+    MemberUpdatePasswordDto memberUpdatePasswordDto = new MemberUpdatePasswordDto(createdMember.getEmail(), "a654321!#");
 
     // when
-    MemberDto.MemberResponse updatedPasswordMember = memberService.updateMemberPassword(createdMember.getEmail(), memberPutPasswordDto);
-    MemberDto.MemberResponse findMember = memberService.findMemberByEmail(updatedPasswordMember.getEmail());
+    MemberResponseDto updatedPasswordMember = memberService.updateMemberPassword(createdMember.getEmail(), memberUpdatePasswordDto);
+    MemberResponseDto findMember = memberService.findMemberByEmail(updatedPasswordMember.getEmail());
 
     // then
     assertTrue(passwordEncoder.matches("a654321!#", findMember.getPassword())); // 새로운 비밀번호 일치 확인
@@ -135,22 +126,22 @@ class MemberServiceImplTest {
   @DisplayName("동일한 비밀번호로 비밀번호 변경 시도 시 예외 발생 테스트")
   void updateMemberPasswordWithSamePassword() {
     // given
-    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+    MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 
-    MemberDto.PutPassword memberPutPasswordDto = new MemberDto.PutPassword(createdMember.getEmail(), "a123456!#");
+    MemberUpdatePasswordDto memberUpdatePasswordDto = new MemberUpdatePasswordDto(createdMember.getEmail(), "a123456!#");
     // when & then
-    assertThrows(Exception.class, () -> memberService.updateMemberPassword(createdMember.getEmail(), memberPutPasswordDto));
+    assertThrows(Exception.class, () -> memberService.updateMemberPassword(createdMember.getEmail(), memberUpdatePasswordDto));
   }
 
 //  @Test
 //  @DisplayName("회원 탈퇴 테스트")
 //  void deleteMember() {
 //    // given
-//    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-//    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+//    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+//   MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 //
-//    MemberDto.Delete deleteMemberDto = new MemberDto.Delete(createdMember.getEmail(), createdMember.getPassword());
+//    MemberDeleteDto deleteMemberDto = new MemberDeleteDto(createdMember.getEmail(), createdMember.getPassword());
 //
 //    // when
 //    memberService.deleteMember(createdMember.getEmail(), deleteMemberDto);
@@ -163,10 +154,10 @@ class MemberServiceImplTest {
 //  @DisplayName("잘못된 비밀번호로 회원 탈퇴 시도 시 예외 발생 테스트")
 //  void deleteMemberWithWrongPassword() {
 //    // given
-//    MemberDto.Post memberPostDto = new MemberDto.Post("test@gmail.com", "a123456!#", "김테스트");
-//    MemberDto.MemberResponse createdMember = memberService.createMember(memberPostDto);
+//    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+//   MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 //
-//    MemberDto.Delete deleteMemberDto = new MemberDto.Delete(createdMember.getEmail(), "wrongPassword");
+//    MemberDeleteDto deleteMemberDto = new MemberDeleteDto(createdMember.getEmail(), "wrongPassword");
 //
 //    // when & then
 //    assertThrows(Exception.class, () -> memberService.deleteMember(createdMember.getEmail(), deleteMemberDto));
