@@ -1,7 +1,10 @@
 package com.volumeTest.volume.member.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
@@ -23,12 +26,4 @@ public class Member {
 
   @Column(nullable = false, unique = false, updatable = true, length = 20)
   private String name;
-
-  public void updateName(String name) {
-    this.name = name;
-  }
-
-  public void updatePassword(String password) {
-    this.password = password;
-  }
 }
