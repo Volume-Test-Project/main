@@ -1,22 +1,21 @@
 package com.volumeTest.volume.member.service;
 
-import com.volumeTest.volume.member.dto.MemberDto;
-import com.volumeTest.volume.member.entity.Member;
+import com.volumeTest.volume.member.dto.*;
 
 public interface MemberService {
 
     // 회원 생성
-    MemberDto.MemberResponse createMember(MemberDto.Post memberPostDto);
+    MemberResponseDto createMember(MemberCreateDto memberCreateDto);
 
     // 회원 조회
-    MemberDto.MemberResponse findMemberByEmail(String email);
+    MemberResponseDto findMemberByEmail(String email);
 
     // 회원 수정
-    MemberDto.MemberResponse updateMember(String email, MemberDto.Put memberPutDto);
+    MemberResponseDto updateMember(String email, MemberUpdateDto memberUpdateDto);
 
     // 회원 비밀번호 변경
-    MemberDto.MemberResponse updateMemberPassword(String email, MemberDto.PutPassword memberPutPasswordDto);
+    MemberResponseDto updateMemberPassword(String email, MemberUpdatePasswordDto memberUpdatePasswordDto);
 
     // 회원 탈퇴
-    void deleteMember(String email, MemberDto.Delete memberDeleteDto);
+    void deleteMember(String email, MemberDeleteDto memberDeleteDto);
 }

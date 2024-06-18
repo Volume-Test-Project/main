@@ -2,7 +2,7 @@ package com.volumeTest.volume.member.service;
 
 import com.volumeTest.volume.common.exception.ExceptionStatus;
 import com.volumeTest.volume.common.pattern.Validator.MemberValidator;
-import com.volumeTest.volume.member.dto.MemberDto;
+import com.volumeTest.volume.member.dto.*;
 import com.volumeTest.volume.member.entity.Member;
 import com.volumeTest.volume.member.mapper.MemberMapper;
 import com.volumeTest.volume.member.repository.MemberRepository;
@@ -24,52 +24,52 @@ public class MemberServiceImpl implements MemberService {
   private final MemberValidator memberValidator;
 
   @Override
-  public MemberDto.MemberResponse createMember(MemberDto.Post memberPostDto) {
-    memberValidator.verifyExistsEmail(memberPostDto.getEmail());
+  public MemberResponseDto createMember(MemberCreateDto memberCreateDto) {
+    memberValidator.verifyExistsEmail(memberCreateDto.getEmail());
     // 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(memberPostDto.getPassword());
+    String encryptedPassword = passwordEncoder.encode(memberCreateDto.getPassword());
 
-    Member member = memberMapper.memberPostDtoToMember(memberPostDto, encryptedPassword);
+    Member member = memberMapper.memberCreateDtoToMember(memberCreateDto, encryptedPassword);
     member = memberRepository.save(member);
-    MemberDto.MemberResponse memberCreatedResponse = memberMapper.entityToResponse(member);
+    MemberResponseDto memberCreatedResponse = memberMapper.entityToResponse(member);
     return memberCreatedResponse;
   }
 
   @Override
-  public MemberDto.MemberResponse findMemberByEmail(String email) {
+  public MemberResponseDto findMemberByEmail(String email) {
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
-    MemberDto.MemberResponse memberFindedResponse = memberMapper.entityToResponse(findMember);
+    MemberResponseDto memberFindedResponse = memberMapper.entityToResponse(findMember);
     return memberFindedResponse;
   }
 
   @Override
-  public MemberDto.MemberResponse updateMember(String email, MemberDto.Put memberPutDto) {
+  public MemberResponseDto updateMember(String email, MemberUpdateDto memberUpdateDto) {
     // 회원 조회
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
 
-    memberValidator.checkPassword(findMember, memberPutDto.getPassword());
+    memberValidator.checkPassword(findMember, memberUpdateDto.getPassword());
 
     // 변경할 정보 저장
-    Member updatedMember = memberMapper.memberPutDtoToMember(memberPutDto);
+    Member updatedMember = memberMapper.memberUpdateDtoToMember(memberUpdateDto);
 
     // 변경된 정보 저장
     memberRepository.save(updatedMember);
 
-    MemberDto.MemberPutResponse memberUpdateResponse = memberMapper.memberToMemberPutResponseDto(updatedMember);
+    MemberUpdateResponseDto memberUpdateResponse = memberMapper.memberToMemberPutResponseDto(updatedMember);
 
     log.info("{}님의 정보가 수정되었습니다. 수정된 정보: 이름={}, 이메일={}", findMember.getName(), updatedMember.getName(), updatedMember.getEmail());
     return memberUpdateResponse;
   }
 
   @Override
-  public MemberDto.MemberResponse updateMemberPassword(String email, MemberDto.PutPassword memberPutPasswordDto) {
+  public MemberResponseDto updateMemberPassword(String email, MemberUpdatePasswordDto memberUpdatePasswordDto) {
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
 
     // 새로운 비밀번호와 이전 비밀번호가 같으면 변경하지 않음
-    memberValidator.verifyPrePasswordAndNewPasswordMatch(passwordEncoder.matches(memberPutPasswordDto.getPassword(), findMember.getPassword()), ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
+    memberValidator.verifyPrePasswordAndNewPasswordMatch(passwordEncoder.matches(memberUpdatePasswordDto.getPassword(), findMember.getPassword()), ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
 
     // 변경할 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(memberPutPasswordDto.getPassword());
+    String encryptedPassword = passwordEncoder.encode(memberUpdatePasswordDto.getPassword());
 
     // 변경할 암호화된 비밀번호 저장
     Member updatedMember = rebuildMemberPassword(findMember, encryptedPassword);
@@ -77,13 +77,13 @@ public class MemberServiceImpl implements MemberService {
     // 변경된 정보 저장
     updatedMember = memberRepository.save(updatedMember);
 
-    MemberDto.MemberResponse updatePasswordResponse = memberMapper.entityToResponse(updatedMember);
+    MemberResponseDto updatePasswordResponse = memberMapper.entityToResponse(updatedMember);
 
     return updatePasswordResponse;
   }
 
   @Override
-  public void deleteMember(String email, MemberDto.Delete memberDeleteDto) {
+  public void deleteMember(String email, MemberDeleteDto memberDeleteDto) {
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
     // 패스워드로 검증
     String encryptedPassword = passwordEncoder.encode(memberDeleteDto.getPassword());

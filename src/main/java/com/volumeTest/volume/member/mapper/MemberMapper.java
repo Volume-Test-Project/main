@@ -1,21 +1,21 @@
 package com.volumeTest.volume.member.mapper;
 
-import com.volumeTest.volume.member.dto.MemberDto;
+import com.volumeTest.volume.member.dto.*;
 import com.volumeTest.volume.member.entity.Member;
 
 public interface MemberMapper {
   // To Entity
-  Member memberPostDtoToMember(MemberDto.Post memberPostDto, String encryptedPassword);
-  Member memberPutDtoToMember(MemberDto.Put memberPutDto);
+  Member memberCreateDtoToMember(MemberCreateDto memberCreateDto, String encryptedPassword);
+  Member memberUpdateDtoToMember(MemberUpdateDto memberUpdateDto);
 
   // Login
-  MemberDto.Login memberToLoginDto(Member member);
+  MemberLoginDto memberToLoginDto(Member member);
 
   // Check
-  MemberDto.CheckPassword checkPasswordToMember(MemberDto.CheckPassword checkPasswordDto);
+  MemberCheckPasswordDto checkPasswordToMember(MemberCheckPasswordDto checkPasswordDto);
 
   // Response
-  MemberDto.MemberResponse entityToResponse(Member member);
-  MemberDto.MemberPostResponse memberToMemberPostResponseDto(Member member);
-  MemberDto.MemberPutResponse memberToMemberPutResponseDto(Member member);
+  MemberResponseDto entityToResponse(Member member);
+  MemberCreateResponseDto memberToMemberPostResponseDto(Member member);
+  MemberUpdateResponseDto memberToMemberPutResponseDto(Member member);
 }
