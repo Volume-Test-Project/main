@@ -7,6 +7,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class ConcertRequestDto {
+
     private int concertId;
     private String concertName;
     private LocalDate concertDate;
