@@ -1,7 +1,7 @@
 package com.volumeTest.volume.member.service;
 
 import com.volumeTest.volume.member.dto.*;
-import com.volumeTest.volume.member.mapper.MemberMapper;
+import com.volumeTest.volume.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class MemberServiceImplTest {
 
+  @Autowired
+  private MemberRepository memberRepository;
   @Autowired
   private MemberService memberService;
 
@@ -76,13 +78,14 @@ class MemberServiceImplTest {
   }
 
   @Test
+  @Transactional
   @DisplayName("회원 정보 수정 테스트")
   void updateMember() {
     // given
     MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
     MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
 
-    MemberUpdateDto memberUpdateDto = new MemberUpdateDto(createdMember.getEmail(), createdMember.getPassword(), "김자바");
+    MemberUpdateDto memberUpdateDto = new MemberUpdateDto(createdMember.getEmail(), "a123456!#", "김자바");
 
     // when
     MemberResponseDto updatedMemberResponse = memberService.updateMember(createdMember.getEmail(), memberUpdateDto);
@@ -106,6 +109,7 @@ class MemberServiceImplTest {
   }
 
   @Test
+  @Transactional
   @DisplayName("회원 비밀번호 수정 테스트")
   void updateMemberPassword() {
     // given
@@ -119,7 +123,7 @@ class MemberServiceImplTest {
     MemberResponseDto findMember = memberService.findMemberByEmail(updatedPasswordMember.getEmail());
 
     // then
-    assertTrue(passwordEncoder.matches("a654321!#", findMember.getPassword())); // 새로운 비밀번호 일치 확인
+    assertThat(findMember.getPassword()).isEqualTo(updatedPasswordMember.getPassword());
   }
 
   @Test
@@ -134,32 +138,34 @@ class MemberServiceImplTest {
     assertThrows(Exception.class, () -> memberService.updateMemberPassword(createdMember.getEmail(), memberUpdatePasswordDto));
   }
 
-//  @Test
-//  @DisplayName("회원 탈퇴 테스트")
-//  void deleteMember() {
-//    // given
-//    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
-//   MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
-//
-//    MemberDeleteDto deleteMemberDto = new MemberDeleteDto(createdMember.getEmail(), createdMember.getPassword());
-//
-//    // when
-//    memberService.deleteMember(createdMember.getEmail(), deleteMemberDto);
-//
-//    // then
-//    assertThrows(Exception.class, () -> memberService.findMemberByEmail(createdMember.getEmail()));
-//  }
-//
-//  @Test
-//  @DisplayName("잘못된 비밀번호로 회원 탈퇴 시도 시 예외 발생 테스트")
-//  void deleteMemberWithWrongPassword() {
-//    // given
-//    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
-//   MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
-//
-//    MemberDeleteDto deleteMemberDto = new MemberDeleteDto(createdMember.getEmail(), "wrongPassword");
-//
-//    // when & then
-//    assertThrows(Exception.class, () -> memberService.deleteMember(createdMember.getEmail(), deleteMemberDto));
-//  }
+  @Test
+  @Transactional
+  @DisplayName("회원 탈퇴 테스트")
+  void deleteMember() {
+    // given
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+   MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
+
+    MemberDeleteDto deleteMemberDto = new MemberDeleteDto(createdMember.getEmail(), "a123456!#");
+
+    // when
+    memberService.deleteMember(createdMember.getEmail(), deleteMemberDto);
+
+    // then
+    assertThrows(Exception.class, () -> memberService.findMemberByEmail(createdMember.getEmail()));
+  }
+
+  @Test
+  @Transactional
+  @DisplayName("잘못된 비밀번호로 회원 탈퇴 시도 시 예외 발생 테스트")
+  void deleteMemberWithWrongPassword() {
+    // given
+    MemberCreateDto memberCreateDto = new MemberCreateDto("test@gmail.com", "a123456!#", "김테스트");
+   MemberResponseDto createdMember = memberService.createMember(memberCreateDto);
+
+    MemberDeleteDto deleteMemberDto = new MemberDeleteDto(createdMember.getEmail(), "wrongPassword");
+
+    // when & then
+    assertThrows(Exception.class, () -> memberService.deleteMember(createdMember.getEmail(), deleteMemberDto));
+  }
 }
