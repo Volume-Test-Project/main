@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class MemberResponseDto {
   private int  memberId;
   @Email
@@ -26,5 +25,11 @@ public class MemberResponseDto {
     this.email = member.getEmail();
     this.password = member.getPassword();
     this.name = member.getName();
+  }
+
+  public MemberResponseDto(MemberUpdateDto memberUpdateDto) {
+    this.email = memberUpdateDto.getEmail();
+    this.password = memberUpdateDto.getPassword();
+    this.name = memberUpdateDto.getName();
   }
 }
