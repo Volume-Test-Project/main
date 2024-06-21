@@ -1,5 +1,6 @@
 package com.volumeTest.volume.member.entity;
 
+import com.volumeTest.volume.member.dto.MemberUpdateDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,4 +27,12 @@ public class Member {
 
   @Column(nullable = false, unique = false, updatable = true, length = 20)
   private String name;
+
+  public void updateMember(MemberUpdateDto memberUpdateDto) {
+    this.name = memberUpdateDto.getName();
+  }
+
+  public void updateMemberPassword(String password) {
+    this.password = password;
+  }
 }
