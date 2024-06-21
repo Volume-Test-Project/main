@@ -29,20 +29,25 @@ public class MemberValidator {
             });
   }
 
-  public Boolean checkPassword(Member member, String password) {
-    // 회원의 비밀번호 추출
-    String memberPassword = member.getPassword();
-    // 비밀번호가 일치하지 않으면 예외 발생
-    verifyPrePasswordAndNewPasswordMatch(passwordEncoder.matches(password, memberPassword), ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
-    // 비밀번호가 일치하면 true 반환
-    return true;
-  }
-
-  public void verifyPrePasswordAndNewPasswordMatch(boolean passwordEncoder, ExceptionStatus memberPasswordNotChange) {
-    if (!passwordEncoder) { // 평문 비밀번호와 암호화된 비밀번호 비교
-      throw new RuntimeException(memberPasswordNotChange.getMessage());
+  public void verifyPasswordCorrect(Member member, String password, ExceptionStatus exceptionStatus) {
+    String encodedPassword = member.getPassword();
+    if (!passwordEncoder.matches(password, encodedPassword)) {
+      throw new IllegalArgumentException(exceptionStatus.getMessage());
     }
   }
 
+  public void verifyPasswordUnCorrect(Member member, String password, ExceptionStatus exceptionStatus) {
+    String encodedPassword = member.getPassword();
+    if (passwordEncoder.matches(password, encodedPassword)) {
+      throw new IllegalArgumentException(exceptionStatus.getMessage());
+    }
+  }
 
+  public void checkPasswordForMemberUpdatePassword(Member member, String password) {
+    verifyPasswordUnCorrect(member, password, ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
+  }
+
+  public void checkPasswordForMemberUpdateAndDelete(Member member, String password) {
+    verifyPasswordCorrect(member, password, ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
+  }
 }
