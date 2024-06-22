@@ -3,12 +3,16 @@ package com.volumeTest.volume.common.security.jwt;
 import com.volumeTest.volume.member.entity.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
+import javax.crypto.SecretKey;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -51,7 +55,7 @@ public class JwtProvider {
                 .setExpiration(expirationDate) //만료 일자
                 .setSubject(member.getEmail()) //주제: 유저 이메일
                 .claim("id", member.getMemberId()) //클레임 ID: 유저 ID
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())//서명 알고리즘, 비밀키
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -63,12 +67,10 @@ public class JwtProvider {
      */
     public boolean validToken(final String token) {
         try {
-            return Jwts.parser()
-                    .setSigningKey(jwtProperties.getSecretKey())
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getExpiration()
-                    .after(new Date());
+            JwtParser parser = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build();
+            return parser.parseClaimsJws(token).getBody().getExpiration().after(new Date());
         } catch (Exception e) {
             return false;
         }
@@ -107,9 +109,18 @@ public class JwtProvider {
      * @return Claims
      */
     private Claims getClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtProperties.getSecretKey())
-                .parseClaimsJws(token)
-                .getBody();
+        JwtParser parser = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build();
+        return parser.parseClaimsJws(token).getBody();
+    }
+
+    /**
+     * 서명 키 생성
+     *
+     * @return SecretKey
+     */
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes());
     }
 }
