@@ -41,4 +41,4 @@ server:
 
 jwt:
   issuer: volume
-  secretKey: volumeSecret
+  secretKey: new-deal-volume-test-project-jwt-secret-key
