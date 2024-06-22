@@ -2,10 +2,14 @@ package com.volumeTest.volume.member.service;
 
 import com.volumeTest.volume.common.exception.ExceptionStatus;
 import com.volumeTest.volume.common.exception.VolumeTestException;
+import com.volumeTest.volume.common.security.jwt.JwtProvider;
 import com.volumeTest.volume.member.dto.MemberDto;
+import com.volumeTest.volume.member.dto.MemberLoginRequestDto;
+import com.volumeTest.volume.member.dto.MemberLoginResponseDto;
 import com.volumeTest.volume.member.entity.Member;
 import com.volumeTest.volume.member.mapper.MemberMapper;
 import com.volumeTest.volume.member.repository.MemberRepository;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +25,7 @@ public class MemberServiceImpl implements MemberService {
   private final MemberRepository memberRepository;
   private final BCryptPasswordEncoder passwordEncoder;
   private final MemberMapper memberMapper;
+  private final JwtProvider jwtProvider;
 
   @Override
   public MemberDto.MemberPostResponse createMember(MemberDto.Post memberPostDto) {
@@ -32,6 +37,33 @@ public class MemberServiceImpl implements MemberService {
 
     Member savedMember = memberRepository.save(memberMapper.memberPostDtoToMember(memberPostDto, encryptedPassword));
     return response;
+  }
+
+  /**
+   * 로그인
+   * @param request MemberLoginRequestDto
+   * @return MemberLoginResponseDto
+   * @throws VolumeTestException 로그인 실패시 ExceptionStatus.MEMBER_LOGIN_FAIL
+   */
+  @Override
+  public MemberLoginResponseDto login(MemberLoginRequestDto request) {
+    //이메일로 회원 조회 없으면 forbidden
+    Member member = memberRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new VolumeTestException(ExceptionStatus.MEMBER_LOGIN_FAIL));
+
+    // 조회한 회원과 입력한 비밀번호가 일치하지 않으면 forbidden
+    if(!checkPassword(member, request.getPassword()))
+      throw new VolumeTestException(ExceptionStatus.MEMBER_LOGIN_FAIL);
+
+    // AccessToken, RefreshToken 생성
+    String accessToken = jwtProvider.generateToken(member, Duration.ofMinutes(30));
+    String refreshToken = jwtProvider.generateToken(member, Duration.ofDays(7));
+
+    // AccessToken, RefreshToken 반환
+    return MemberLoginResponseDto.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
   }
 
   @Override
