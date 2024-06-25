@@ -2,6 +2,7 @@ package com.volumeTest.volume.common.security.config;
 
 import com.volumeTest.volume.common.security.filter.TokenAuthenticationFilter;
 import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

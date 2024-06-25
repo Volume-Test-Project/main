@@ -3,7 +3,6 @@ package com.volumeTest.volume.member.repository;
 import com.volumeTest.volume.member.entity.Member;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

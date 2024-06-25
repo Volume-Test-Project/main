@@ -1,9 +1,8 @@
 package com.volumeTest.volume.member.service;
 
-import com.volumeTest.volume.common.exception.ExceptionStatus;
-import com.volumeTest.volume.common.exception.VolumeTestException;
+import com.volumeTest.volume.common.pattern.Validator.MemberValidator;
 import com.volumeTest.volume.common.security.jwt.JwtProvider;
-import com.volumeTest.volume.member.dto.MemberDto;
+import com.volumeTest.volume.member.dto.*;
 import com.volumeTest.volume.member.dto.MemberLoginRequestDto;
 import com.volumeTest.volume.member.dto.MemberLoginResponseDto;
 import com.volumeTest.volume.member.entity.Member;
@@ -26,17 +25,18 @@ public class MemberServiceImpl implements MemberService {
   private final BCryptPasswordEncoder passwordEncoder;
   private final MemberMapper memberMapper;
   private final JwtProvider jwtProvider;
+  private final MemberValidator memberValidator;
 
   @Override
-  public MemberDto.MemberPostResponse createMember(MemberDto.Post memberPostDto) {
-    verifyExistsEmail(memberPostDto.getEmail());
+  public MemberResponseDto createMember(MemberCreateDto memberCreateDto) {
+    memberValidator.verifyExistsEmail(memberCreateDto.getEmail());
     // 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(memberPostDto.getPassword());
+    String encryptedPassword = passwordEncoder.encode(memberCreateDto.getPassword());
 
-    MemberDto.MemberPostResponse response = memberMapper.memeberPostDtoToResponse(memberPostDto, encryptedPassword);
-
-    Member savedMember = memberRepository.save(memberMapper.memberPostDtoToMember(memberPostDto, encryptedPassword));
-    return response;
+    Member member = memberMapper.memberCreateDtoToMember(memberCreateDto, encryptedPassword);
+    member = memberRepository.save(member);
+    MemberResponseDto memberCreatedResponse = memberMapper.entityToResponse(member);
+    return memberCreatedResponse;
   }
 
   /**
@@ -67,77 +67,56 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public Member findMemberByEmail(String email) {
-    return findVerifyMemberByEmail(email);
+  public MemberResponseDto findMemberByEmail(String email) {
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
+    MemberResponseDto memberFindedResponse = memberMapper.entityToResponse(findMember);
+    return memberFindedResponse;
   }
 
   @Override
-  public Member updateMember(Member member, String name, String password) {
+  @Transactional
+  public MemberResponseDto updateMember(String email, MemberUpdateDto memberUpdateDto) {
     // 회원 조회
-    Member findMember = findVerifyMemberByEmail(member.getEmail());
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
 
-    checkPassword(findMember, password);
+    memberValidator.checkPasswordForMemberUpdateAndDelete(findMember, memberUpdateDto.getPassword());
 
     // 변경할 정보 저장
-    findMember.updateName(name);
-
-    // 변경된 정보 저장
-    Member updatedMember = memberRepository.save(findMember);
+    findMember.updateMember(memberUpdateDto);
+    MemberResponseDto updatedMember = memberMapper.memberUpdateDtoToMemberResponseDto(memberUpdateDto);
 
     log.info("{}님의 정보가 수정되었습니다. 수정된 정보: 이름={}, 이메일={}", findMember.getName(), updatedMember.getName(), updatedMember.getEmail());
     return updatedMember;
   }
 
+
   @Override
-  public Member updateMemberPassword(Member member, String password) {
-    Member findMember = findVerifyMemberByEmail(member.getEmail());
+  @Transactional
+  public MemberResponseDto updateMemberPassword(String email, MemberUpdatePasswordDto memberUpdatePasswordDto) {
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
 
     // 새로운 비밀번호와 이전 비밀번호가 같으면 변경하지 않음
-    if (passwordEncoder.matches(password, findMember.getPassword())) { // 평문 비밀번호와 암호화된 비밀번호 비교
-      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
-    }
+    memberValidator.checkPasswordForMemberUpdatePassword(findMember, memberUpdatePasswordDto.getPassword());
 
     // 변경할 비밀번호 암호화
-    String encryptedPassword = passwordEncoder.encode(password);
+    String encryptedPassword = passwordEncoder.encode(memberUpdatePasswordDto.getPassword());
 
     // 변경할 암호화된 비밀번호 저장
-    findMember.updatePassword(encryptedPassword);
+    findMember.updateMemberPassword(encryptedPassword);
 
-    // 변경된 정보 저장
-    Member updatedMember = memberRepository.save(findMember);
+    MemberResponseDto updatePasswordResponse = memberMapper.entityToResponse(findMember);
 
-    return updatedMember;
+    return updatePasswordResponse;
   }
-
 
   @Override
-  public void deleteMember(Member member, String password) {
+  @Transactional
+  public void deleteMember(String email, MemberDeleteDto memberDeleteDto) {
+    Member findMember = memberValidator.findVerifyMemberByEmail(email);
     // 패스워드로 검증
-    checkPassword(member, password);
-    memberRepository.delete(member);
-  }
+    memberValidator.checkPasswordForMemberUpdateAndDelete(findMember, memberDeleteDto.getPassword());
 
-  // Verify
-  private void verifyExistsEmail(String email) {
-    memberRepository.findByEmail(email)
-            .ifPresent(member -> {
-              throw new VolumeTestException(ExceptionStatus.MEMBER_EMAIL_EXISTS);
-            });
-  }
-
-  private Member findVerifyMemberByEmail(String email) {
-    return memberRepository.findByEmail(email)
-            .orElseThrow(() -> new VolumeTestException(ExceptionStatus.MEMBER_NOT_FOUND));
-  }
-
-  private Boolean checkPassword(Member member, String password) {
-    // 회원의 비밀번호 추출
-    String memberPassword = member.getPassword();
-    // 비밀번호가 일치하지 않으면 예외 발생
-    if(!passwordEncoder.matches(password, memberPassword)) {
-      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
-    }
-    // 비밀번호가 일치하면 true 반환
-    return true;
+    log.info("{}님의 정보가 삭제되었습니다.", findMember.getEmail());
+    memberRepository.delete(findMember);
   }
 }

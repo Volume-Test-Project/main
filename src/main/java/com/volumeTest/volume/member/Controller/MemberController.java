@@ -2,12 +2,7 @@ package com.volumeTest.volume.member.Controller;
 
 import static com.volumeTest.volume.common.util.ApiResponseUtil.success;
 
-import com.volumeTest.volume.common.util.ApiResponseUtil;
-import com.volumeTest.volume.common.util.ApiResponseUtil.ApiResult;
-import com.volumeTest.volume.member.dto.MemberDto;
-import com.volumeTest.volume.member.dto.MemberLoginRequestDto;
-import com.volumeTest.volume.member.entity.Member;
-import com.volumeTest.volume.member.mapper.MemberMapper;
+import com.volumeTest.volume.member.dto.*;
 import com.volumeTest.volume.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +21,11 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
   private final MemberService memberService;
-  private final MemberMapper mapper;
 
   // 회원 가입
   @PostMapping("/signup")
-  public ResponseEntity<Object> postMember(@RequestBody @Valid MemberDto.Post memberPostDto) {
-    memberService.createMember(memberPostDto);
+  public ResponseEntity<Object> postMember(@RequestBody @Valid MemberCreateDto memberCreateDto) {
+    memberService.createMember(memberCreateDto);
     return new ResponseEntity<>(success("회원가입이 완료되었습니다."), new HttpHeaders(), HttpStatus.CREATED);
   }
 
@@ -50,30 +44,36 @@ public class MemberController {
   // 회원조회
   @GetMapping("/info")
   public ResponseEntity<Object> getMember(@AuthenticationPrincipal String email) {
-
-    Member findMember = memberService.findMemberByEmail(email);
-
-    return new ResponseEntity<>(success(mapper.memberToMemberPostResponseDto(findMember)), new HttpHeaders(), HttpStatus.OK);
+    MemberResponseDto findMember = memberService.findMemberByEmail(email);
+    return new ResponseEntity<>(success(findMember), new HttpHeaders(), HttpStatus.OK);
   }
 
   // 회원정보 수정
-  @PatchMapping("/mypage/update")
-  public ResponseEntity<Object> patchMember(@AuthenticationPrincipal String email,
-                                                    @Valid @RequestBody MemberDto.Patch memberPatchDto) {
+  @PutMapping("/mypage/update")
+  public ResponseEntity<Object> putMember(@AuthenticationPrincipal String email,
+                                    @Valid @RequestBody MemberUpdateDto memberUpdateDto) {
 
-    Member findMember = memberService.findMemberByEmail(email);
-    Member updateMember = memberService.updateMember(findMember, memberPatchDto.getName(), memberPatchDto.getPassword());
+    MemberResponseDto updateMember = memberService.updateMember(email, memberUpdateDto);
 
-    return new ResponseEntity<>(success(mapper.memberToMemberPatchResponseDto(updateMember)),new HttpHeaders(), HttpStatus.OK);
+    return new ResponseEntity<>(success(updateMember),new HttpHeaders(), HttpStatus.OK);
+  }
+
+  // 비밀번호 변경
+  @PutMapping("/mypage/update/password")
+  public ResponseEntity<Object> putPassword(@AuthenticationPrincipal String email,
+                                      @Valid @RequestBody MemberUpdatePasswordDto memberUpdatePasswordDto) {
+
+    MemberResponseDto updateMemberPassword = memberService.updateMemberPassword(email, memberUpdatePasswordDto);
+
+    return new ResponseEntity<>(success(updateMemberPassword), new HttpHeaders(), HttpStatus.OK);
   }
 
   // 회원탈퇴
   @DeleteMapping("/mypage/delete")
   public ResponseEntity<Object> deleteMember(@AuthenticationPrincipal String email,
-                                        @Valid  @RequestBody MemberDto.CheckPassword checkPasswordDto) {
+                                        @Valid  @RequestBody MemberDeleteDto memberDeleteDto) {
 
-    Member findMember = memberService.findMemberByEmail(email);
-    memberService.deleteMember(findMember, checkPasswordDto.getPassword());
+    memberService.deleteMember(email, memberDeleteDto);
 
     return new ResponseEntity<>(success("삭제되었습니다."), new HttpHeaders(), HttpStatus.OK);
   }
