@@ -24,30 +24,26 @@ public class MemberValidator {
 
   public Member findVerifyMemberByEmail(String email) {
     return memberRepository.findByEmail(email)
-            .orElseThrow(() -> {
-              throw new RuntimeException(ExceptionStatus.MEMBER_NOT_FOUND.getMessage());
-            });
+            .orElseThrow(() -> new RuntimeException(ExceptionStatus.MEMBER_NOT_FOUND.getMessage()));
   }
 
-  public void verifyPasswordCorrect(Member member, String password, ExceptionStatus exceptionStatus) {
+  public boolean verifyPasswordCorrect(Member member, String password) {
     String encodedPassword = member.getPassword();
-    if (!passwordEncoder.matches(password, encodedPassword)) {
-      throw new IllegalArgumentException(exceptionStatus.getMessage());
-    }
+    return passwordEncoder.matches(password, encodedPassword);
   }
 
-  public void verifyPasswordUnCorrect(Member member, String password, ExceptionStatus exceptionStatus) {
-    String encodedPassword = member.getPassword();
-    if (passwordEncoder.matches(password, encodedPassword)) {
-      throw new IllegalArgumentException(exceptionStatus.getMessage());
-    }
-  }
+//  public void verifyPasswordUnCorrect(Member member, String password, ExceptionStatus exceptionStatus) {
+//    String encodedPassword = member.getPassword();
+//    if (passwordEncoder.matches(password, encodedPassword)) {
+//      throw new IllegalArgumentException(exceptionStatus.getMessage());
+//    }
+//  }
 
-  public void checkPasswordForMemberUpdatePassword(Member member, String password) {
-    verifyPasswordUnCorrect(member, password, ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
-  }
-
-  public void checkPasswordForMemberUpdateAndDelete(Member member, String password) {
-    verifyPasswordCorrect(member, password, ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
-  }
+//  public void checkPasswordForMemberUpdatePassword(Member member, String password) {
+//    verifyPasswordUnCorrect(member, password, ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
+//  }
+//
+//  public void checkPasswordForMemberUpdateAndDelete(Member member, String password) {
+//    verifyPasswordCorrect(member, password, ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
+//  }
 }
