@@ -1,7 +1,12 @@
 package com.volumeTest.volume.member.service;
 
+import com.volumeTest.volume.member.dto.MemberCreateDto;
+import com.volumeTest.volume.member.dto.MemberDeleteDto;
 import com.volumeTest.volume.member.dto.MemberLoginRequestDto;
 import com.volumeTest.volume.member.dto.MemberLoginResponseDto;
+import com.volumeTest.volume.member.dto.MemberResponseDto;
+import com.volumeTest.volume.member.dto.MemberUpdatePasswordDto;
+import com.volumeTest.volume.member.dto.MemberUpdateDto;
 
 public interface MemberService {
 

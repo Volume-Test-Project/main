@@ -1,5 +1,7 @@
 package com.volumeTest.volume.member.service;
 
+import com.volumeTest.volume.common.exception.ExceptionStatus;
+import com.volumeTest.volume.common.exception.VolumeTestException;
 import com.volumeTest.volume.common.pattern.Validator.MemberValidator;
 import com.volumeTest.volume.common.security.jwt.JwtProvider;
 import com.volumeTest.volume.member.dto.*;
@@ -35,8 +37,7 @@ public class MemberServiceImpl implements MemberService {
 
     Member member = memberMapper.memberCreateDtoToMember(memberCreateDto, encryptedPassword);
     member = memberRepository.save(member);
-    MemberResponseDto memberCreatedResponse = memberMapper.entityToResponse(member);
-    return memberCreatedResponse;
+      return memberMapper.entityToResponse(member);
   }
 
   /**
@@ -52,7 +53,7 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(() -> new VolumeTestException(ExceptionStatus.MEMBER_LOGIN_FAIL));
 
     // 조회한 회원과 입력한 비밀번호가 일치하지 않으면 forbidden
-    if(!checkPassword(member, request.getPassword()))
+    if(!memberValidator.verifyPasswordCorrect(member, request.getPassword()))
       throw new VolumeTestException(ExceptionStatus.MEMBER_LOGIN_FAIL);
 
     // AccessToken, RefreshToken 생성
@@ -69,8 +70,7 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public MemberResponseDto findMemberByEmail(String email) {
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
-    MemberResponseDto memberFindedResponse = memberMapper.entityToResponse(findMember);
-    return memberFindedResponse;
+      return memberMapper.entityToResponse(findMember);
   }
 
   @Override
@@ -78,8 +78,9 @@ public class MemberServiceImpl implements MemberService {
   public MemberResponseDto updateMember(String email, MemberUpdateDto memberUpdateDto) {
     // 회원 조회
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
-
-    memberValidator.checkPasswordForMemberUpdateAndDelete(findMember, memberUpdateDto.getPassword());
+    if(!memberValidator.verifyPasswordCorrect(findMember, memberUpdateDto.getPassword()))
+      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
+//    memberValidator.checkPasswordForMemberUpdateAndDelete(findMember, memberUpdateDto.getPassword());
 
     // 변경할 정보 저장
     findMember.updateMember(memberUpdateDto);
@@ -96,7 +97,9 @@ public class MemberServiceImpl implements MemberService {
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
 
     // 새로운 비밀번호와 이전 비밀번호가 같으면 변경하지 않음
-    memberValidator.checkPasswordForMemberUpdatePassword(findMember, memberUpdatePasswordDto.getPassword());
+    if(memberValidator.verifyPasswordCorrect(findMember, memberUpdatePasswordDto.getPassword()))
+      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_NOT_CHANGE);
+//    memberValidator.checkPasswordForMemberUpdatePassword(findMember, memberUpdatePasswordDto.getPassword());
 
     // 변경할 비밀번호 암호화
     String encryptedPassword = passwordEncoder.encode(memberUpdatePasswordDto.getPassword());
@@ -104,9 +107,7 @@ public class MemberServiceImpl implements MemberService {
     // 변경할 암호화된 비밀번호 저장
     findMember.updateMemberPassword(encryptedPassword);
 
-    MemberResponseDto updatePasswordResponse = memberMapper.entityToResponse(findMember);
-
-    return updatePasswordResponse;
+      return memberMapper.entityToResponse(findMember);
   }
 
   @Override
@@ -114,7 +115,8 @@ public class MemberServiceImpl implements MemberService {
   public void deleteMember(String email, MemberDeleteDto memberDeleteDto) {
     Member findMember = memberValidator.findVerifyMemberByEmail(email);
     // 패스워드로 검증
-    memberValidator.checkPasswordForMemberUpdateAndDelete(findMember, memberDeleteDto.getPassword());
+    if(!memberValidator.verifyPasswordCorrect(findMember, memberDeleteDto.getPassword()))
+      throw new VolumeTestException(ExceptionStatus.MEMBER_PASSWORD_MISMATCH);
 
     log.info("{}님의 정보가 삭제되었습니다.", findMember.getEmail());
     memberRepository.delete(findMember);
