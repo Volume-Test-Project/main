@@ -155,4 +155,12 @@ class MemberServiceImplTest {
     // when & then
     assertThrows(Exception.class, () -> memberService.deleteMember(member, "wrongPassword"));
   }
+
+//  @Test
+//  @DisplayName("로그인 성공 테스트")
+//  void loginSuccess() {
+//    // given
+//    Member kim = new Member(1, "test@test.com", "a123456!@", "김테스트");
+//
+//  }
 }
