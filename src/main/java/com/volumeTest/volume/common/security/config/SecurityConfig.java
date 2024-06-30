@@ -1,14 +1,23 @@
 package com.volumeTest.volume.common.security.config;
 
+import com.volumeTest.volume.common.security.filter.TokenAuthenticationFilter;
+import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,29 +27,33 @@ import java.util.List;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@AllArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
+  TokenAuthenticationFilter tokenAuthenticationFilter;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-      http
-              .csrf().disable() // CSRF 비활성화 (REST API에서는 일반적으로 불필요)
-              .cors(withDefaults()) // CORS 기본 설정으로 활성화
-              .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 사용 안 함
-              .and()
-              .authorizeHttpRequests(authorize -> authorize
-                      .requestMatchers(PathRequest.toH2Console()).permitAll() // H2 콘솔 접근 허용
-                      .requestMatchers(HttpMethod.POST, "/member/signup").permitAll() // 회원 가입 허용
-                      .requestMatchers(HttpMethod.POST, "/member/login").permitAll() // 로그인 허용
-                      .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
-              )
-              .headers(headers -> headers
-                      .frameOptions().sameOrigin() // H2 콘솔 프레임 접근 허용
-              )
-              .formLogin().disable() // 폼 로그인 비활성화
-              .httpBasic().disable(); // HTTP Basic 인증 비활성화
+    http
+//            .csrf((csrf) -> csrf.ignoringRequestMatchers(PathRequest.toH2Console())) // H2 콘솔 접근 허용
+            .csrf(AbstractHttpConfigurer::disable) // CSRF 보안 토큰 disable
+            .headers((headers) -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
+
+            .cors(withDefaults())
+            .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+//            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .authorizeHttpRequests(authorize ->
+              authorize
+                .requestMatchers(PathRequest.toH2Console()).permitAll() // H2 콘솔 접근 허용
+                .requestMatchers(HttpMethod.POST, "/member/signup").permitAll() // 회원 가입 허용
+                .requestMatchers(HttpMethod.POST, "/member/login").permitAll() // 로그인 허용
+                .anyRequest().permitAll() // 나머지 요청도 일단 전체 허용
+            );
 
       return http.build();
     }
@@ -52,6 +65,7 @@ public class SecurityConfig {
 
     corsConfiguration.setAllowCredentials(true);
     corsConfiguration.addAllowedOrigin("http://localhost:3000"); // 허용할 Origin 추가
+    corsConfiguration.addAllowedOrigin("http://localhost:8080"); // 허용할 Origin 추가
     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     corsConfiguration.addAllowedHeader("Authorization");
     corsConfiguration.addAllowedHeader("Content-Type");

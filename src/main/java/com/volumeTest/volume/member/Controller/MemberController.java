@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,18 @@ public class MemberController {
   public ResponseEntity<Object> postMember(@RequestBody @Valid MemberCreateDto memberCreateDto) {
     memberService.createMember(memberCreateDto);
     return new ResponseEntity<>(success("회원가입이 완료되었습니다."), new HttpHeaders(), HttpStatus.CREATED);
+  }
+
+  // 로그인
+  @PostMapping("/login")
+  public ResponseEntity<Object> login(@RequestBody MemberLoginRequestDto request) {
+      return new ResponseEntity<>(success(memberService.login(request)), new HttpHeaders(), HttpStatus.OK);
+  }
+
+  //내 정보 조회
+  @GetMapping("/me")
+  public ResponseEntity<Object> me(Authentication authentication) {
+    return new ResponseEntity<>(success(authentication.getPrincipal()), new HttpHeaders(), HttpStatus.OK);
   }
 
   // 회원조회

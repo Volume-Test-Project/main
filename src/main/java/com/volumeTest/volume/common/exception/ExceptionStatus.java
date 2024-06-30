@@ -12,6 +12,7 @@ public enum ExceptionStatus {
   MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, 10001, "사용자를 찾을 수 없습니다."),
   MEMBER_EXISTS(HttpStatus.CONFLICT, 10002, "이미 존재하는 사용자입니다."),
   MEMBER_EMAIL_EXISTS(HttpStatus.CONFLICT, 10003, "이미 존재하는 Email 입니다."),
+  MEMBER_LOGIN_FAIL(HttpStatus.FORBIDDEN, 10004, "로그인 실패"),
 
   // Verify
   MEMBER_PASSWORD_MISMATCH(HttpStatus.CONFLICT, 10201, "비밀번호가 일치하지 않습니다."),
